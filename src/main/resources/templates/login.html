@@ -1,0 +1,72 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<title>Login</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="../static/style.css" th:href="@{/style.css}" />
+	<!-- JS -->
+	<script src="../static/js.js" th:src="@{/js.js}" defer></script>
+</head>
+
+<body>
+	<div class="d-flex p-2 align-items-center justify-content-center min-vh-100" id="form-signin">
+
+		<form class="d-flex flex-column align-items-center bd-highlight mb-3 w-25 p-4 border rounded bg-white"
+			th:action="@{/login}" method="post">
+			<div class="p-2 bd-highlight">
+				<div class="d-flex align-items-center gap-2 p-2">
+					<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+						class="bi bi-person-workspace text-dark" viewBox="0 0 16 16">
+						<path d="M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+						<path
+							d="M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.4 5.4 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2z" />
+					</svg>
+
+					<span class="fw-bold text-black display-3 mb-0">EMS</span>
+				</div>
+			</div>
+
+			<div class="w-100 p-2 bd-highlight">
+				<div class="form-floating mb-2">
+					<input type="text" class="form-control" id="inputUser" placeholder="username" name="username">
+					<label for="inputUser">User</label>
+				</div>
+				<div class="form-floating mb-3">
+					<input type="password" class="form-control" id="inputPassword" placeholder="Password"
+						name="password"> <label for="inputPassword">Password</label>
+				</div>
+				<div th:if="${param.error}" class="alert alert-danger text-center fs-5">
+					Invalid username or password.</div>
+				<div th:if="${param.logout}" class="alert alert-success text-center fs-5">You have been
+					logged out.</div>
+
+			</div>
+
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" id="_csrf" />
+			<button class="w-25 btn btn-lg btn-primary" type="submit">Sign
+				in</button>
+			<p class="mt-5 mb-3 text-muted"></p>
+		</form>
+	</div>
+
+	</div>
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+		crossorigin="anonymous"></script>
+
+	<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script> -->
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

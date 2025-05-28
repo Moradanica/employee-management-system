@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www/thymeleaf.org/extas/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<meta name="user-role" th:content="${#authentication.principal.authorities}" sec:authorize="isAuthenticated()">
+	<title>Homepage</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="../static/style.css" th:href="@{/style.css}" />
+	<!-- JS -->
+	<script src="../static/js.js" th:src="@{/js.js}" defer></script>
+</head>
+
+<body>
+	<header>
+		<!-- Fixed navbar -->
+		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+			<div class="collapse navbar-collapse container" id="navbarCollapse">
+				<a class="navbar-brand d-flex align-items-center gap-3" th:href="@{/home}">
+					<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor"
+						class="bi bi-person-workspace text-white" viewBox="0 0 16 16">
+						<path d="M4 16s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-5.95a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+						<path
+							d="M2 1a2 2 0 0 0-2 2v9.5A1.5 1.5 0 0 0 1.5 14h.653a5.4 5.4 0 0 1 1.066-2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v9h-2.219c.554.654.89 1.373 1.066 2h.653a1.5 1.5 0 0 0 1.5-1.5V3a2 2 0 0 0-2-2z" />
+					</svg> <span class="fw-bold text-white display-5 mb-0">EMS</span>
+				</a>
+
+				<ul class="navbar-nav mr-auto align-items-center">
+					<li class="nav-item active"><a class="nav-link" th:href="@{/home}">Home</a>
+					</li>
+					<!-- <li class="nav-item active"><a class="nav-link" href="#">Employees</a>
+					</li>
+					<li class="nav-item active"><a class="nav-link" href="#">Departments</a>
+					</li>
+					<li class="nav-item active"><a class="nav-link" href="#">Report</a>
+					</li> -->
+					<li class="nav-item active">
+						<form th:action="@{/logout}" method="post" class="d-inline">
+							<button type="submit"
+								class="nav-link btn btn-link text-decoration-none p-0 m-0">Logout</button>
+						</form>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+
+	<!-- Main jumbotron for a primary marketing message or call to action -->
+	<div class="p-3 mb-4 mt-5 rounded-3" id="mainPage">
+		<div class="container py-5">
+			<form class="d-flex justify-content-end" role="search">
+				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchInput"
+					name="keyword" th:value="${keyword}">
+			</form>
+		</div>
+
+		<div class="vh-100 pt-2" id="resultContainer" th:fragment="resultBody">
+			<!-- or bg-body-secondary or custom -->
+			<div class="container">
+				<table class="table table-bordered" id="employeeTable">
+					<thead>
+						<tr>
+							<th scope="col">ID</th>
+							<th scope="col">First Name</th>
+							<th scope="col">Last Name</th>
+							<th scope="col">Email</th>
+							<th scope="col">Job Title</th>
+							<th scope="col">Salary</th>
+							<th scope="col">Actions</th>
+						</tr>
+					</thead>
+					<div id="searchResults">
+						<tbody id="employeeTableBody">
+							<tr th:if="${#lists.isEmpty(empList)}">
+								<td colspan="7" class="text-center text-muted">No Results Found.</td>
+							</tr>
+							<tr th:each="emp : ${empList}">
+								<td th:text="${emp.id}">1</td>
+								<td th:text="${emp.firstName}">First</td>
+								<td th:text="${emp.lastName}">Last</td>
+								<td th:text="${emp.email}">Email</td>
+								<td th:text="${emp.jobTitle}">Job</td>
+								<td th:text="${#numbers.formatDecimal(emp.salary, 1, 'COMMA', 2, 'POINT')}">0.00</td>
+								<td>
+									<button type="button" class="btn btn-outline-primary btn-sm edit-btn"
+										data-bs-toggle="modal" data-bs-target="#editEmpModal" th:data-bs-id="${emp.id}">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+											<path
+												d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
+											</path>
+											<path fill-rule="evenodd"
+												d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
+											</path>
+										</svg>
+									</button>
+
+									<button type="button" class="btn btn-outline-danger btn-sm delete-btn"
+										th:data-bs-id="${emp.id}"  sec:authorize="hasRole('ADMIN')">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+											fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+											<path
+												d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5">
+											</path>
+										</svg>
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</div>
+
+				</table>
+
+				<nav aria-label="Page navigation" id="pageNav" th:unless="${#lists.isEmpty(empList)}">
+					<ul id="pagination" class="pagination d-flex justify-content-center">
+						<!-- // Previous button  -->
+						<li class="page-item" th:classappend="${empList.first} ? 'disabled'">
+							<a class="page-link" th:unless="${keyword} != null and keyword != ''"
+								th:href="@{/home(page=${empList.number})}" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+							</a>
+							<a class="page-link" th:if="${keyword} != null and keyword != ''"
+								th:href="@{/search(page=${empList.number}, keyword=${keyword})}">&laquo;</a>
+						</li>
+						<!-- // Page numbers  -->
+						<li class="page-item" th:each="i : ${#numbers.sequence(0, empList.totalPages - 1)}"
+							th:classappend="${empList.number == i} ? 'active'">
+							<a th:unless="${keyword} != null and keyword != ''" th:href="@{/home(page=${i})}"
+								th:text="${i + 1}" class="page-link"></a>
+							<a class="page-link" th:if="${keyword} != null and keyword != ''"
+								th:href="@{/search(page=${i}, keyword=${keyword})}" th:text="${i +1}"></a>
+						</li>
+
+						<!-- // Next button  -->
+						<li class="page-item" th:classappend="${empList.last} ? 'disabled'">
+							<a class="page-link" th:unless="${keyword} != null and keyword != ''"
+								th:href="@{/home(page=${empList.number + 1})}" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+							</a>
+							<a class="page-link" th:if="${keyword} != null and keyword != ''"
+								th:href="@{/search(page=${empList.number + 1},  keyword=${keyword})}"><span
+									aria-hidden="true">&raquo;</span></a>
+						</li>
+					</ul>
+				</nav>
+
+				<div class="container py-2 d-flex justify-content-end">
+					<button type="button" class="btn btn-success" data-bs-toggle="modal"
+						data-bs-target="#addEmpModal">Add Employee</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit Employee Modal -->
+	<div class="modal fade" id="editEmpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Edit Employee</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form class="edit-emp-form">
+						<div class="form-group row align-items-center">
+							<input type="hidden" id="empId" name="id">
+							<label for="First Name" class="col-sm-2 col-form-label">First Name</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="first-name" name="firstName">
+							</div>
+
+							<label for="Last Name" class="col-sm-2 col-form-label">Last Name</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="last-name" name="lastName">
+							</div>
+
+							<label for="Email" class="col-sm-2 col-form-label">Email</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="email" name="email">
+							</div>
+
+							<label for="Job Title" class="col-sm-2 col-form-label">Job Title</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="job-title" name="jobTitle">
+							</div>
+
+							<label for="Salary" class="col-sm-2 col-form-label">Salary</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="salary" name="salary">
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<!-- Modal Footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary update-btn" form="edit-emp-form">Update</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Employee Modal -->
+	<div class="modal fade" id="addEmpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Add Employee</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form class="add-emp-form">
+						<div class="form-group row align-items-center">
+							<label for="First Name" class="col-sm-2 col-form-label">First Name</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="first-name" name="firstName">
+							</div>
+
+							<label for="Last Name" class="col-sm-2 col-form-label">Last Name</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="last-name" name="lastName">
+							</div>
+
+							<label for="Email" class="col-sm-2 col-form-label">Email</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="email" name="email">
+							</div>
+
+							<label for="Job Title" class="col-sm-2 col-form-label">Job Title</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="job-title" name="jobTitle">
+							</div>
+
+							<label for="Salary" class="col-sm-2 col-form-label">Salary</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="salary" name="salary">
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<!-- Modal Footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary add-btn">Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- <footer class="container">
+    <p>© Company 2017-2018</p>
+  </footer> -->
+
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

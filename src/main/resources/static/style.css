@@ -1,0 +1,26 @@
+#homeLogo {
+    color: #e9ecef;
+}
+
+#form-signin {
+    background-color: #dee2e6;
+}
+
+.invalid-feedback {
+    color: red;
+}
+
+#searchInput {
+	max-width: 300px;
+}
+
+.pagination .page-link {
+  color: black;
+}
+
+/* Active page: white text on gray background */
+.page-item.active .page-link {
+  background-color: #6c757d; /* Bootstrap's gray, or use your own hex */
+  border-color: #6c757d;
+  color: white;
+}
